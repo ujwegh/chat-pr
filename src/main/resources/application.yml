@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: chat-pr
+  profiles:
+    active: dev
+logging:
+  file:
+    name: chat-pr.log
+
+---
+spring:
+  profiles: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/chat-dev
+    username: postgres
+    password: postgres
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 8080
+
+---
+spring:
+  profiles: prod
