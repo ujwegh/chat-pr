@@ -4,6 +4,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.cassandra.core.cql.Ordering;
+import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
+import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
 import org.springframework.data.cassandra.core.mapping.Table;
 import org.springframework.util.StringUtils;
 
@@ -17,10 +20,13 @@ import java.time.LocalDateTime;
 public class Message {
 
     private String text;
-    private LocalDateTime dateTime;
-    private String roomId;
+    @PrimaryKeyColumn(name = "fromUserEmail", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
     private String fromUserEmail;
     private String toUserEmail;
+    @PrimaryKeyColumn(name = "roomId", ordinal = 1, type = PrimaryKeyType.PARTITIONED)
+    private String roomId;
+    @PrimaryKeyColumn(name = "date", ordinal = 2, type = PrimaryKeyType.CLUSTERED, ordering = Ordering.ASCENDING)
+    private LocalDateTime dateTime;
 
     public boolean isPublic() {
         return StringUtils.isEmpty(this.toUserEmail);

@@ -28,7 +28,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public List<Message> getAllMessagesByUserAndRoomId(String email, String roomId) {
         log.debug("Find all messages for user: {} and roomId: {}", email, roomId);
-        return messageRepository.findAllByEmailAndRoomId(email, roomId);
+        return messageRepository.findAllByFromUserEmailAndRoomId(email, roomId);
     }
 
     @Override
@@ -64,6 +64,4 @@ public class MessageServiceImpl implements MessageService {
         simpMessagingTemplate.convertAndSendToUser(message.getToUserEmail(), "/queue/" + message.getRoomId() + ".private.messages", message);
         createMessage(message);
     }
-
-
 }

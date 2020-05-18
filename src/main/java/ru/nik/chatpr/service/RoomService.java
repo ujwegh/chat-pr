@@ -8,5 +8,6 @@ public interface RoomService {
     Room findById(String roomId);
     Room create(Room room);
     List<Room> findAll();
-
+    Room joinRoom(String email, String roomId);
+    Room leaveRoom(String email, String roomId);
 }

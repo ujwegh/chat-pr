@@ -32,16 +32,14 @@ spring:
         enabled: true
     cassandra:
       contact-points: 127.0.0.1
-      username: <username, if any>
-      password: <password, if any>
-      keyspace: chat-keyspace
+      keyspace-name: chatkeyspace
       port: 9042
-      schema-action: NONE
+#      schema-action: NONE
 
 
 
 server:
-  port: 8080
+  port: 8075
 
 logging.level.org.springframework.web: DEBUG
 
