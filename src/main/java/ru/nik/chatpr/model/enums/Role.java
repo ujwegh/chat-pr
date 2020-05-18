@@ -1,4 +1,4 @@
-package ru.nik.chatpr.model;
+package ru.nik.chatpr.model.enums;
 
 import org.springframework.security.core.GrantedAuthority;
 

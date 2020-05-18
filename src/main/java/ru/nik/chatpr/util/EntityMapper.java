@@ -1,12 +1,13 @@
 package ru.nik.chatpr.util;
 
 import org.springframework.security.core.GrantedAuthority;
-import ru.nik.chatpr.dto.UserLoginDto;
 import ru.nik.chatpr.dto.UserRegistrationDto;
+import ru.nik.chatpr.model.enums.Role;
 import ru.nik.chatpr.model.User;
 import ru.nik.chatpr.security.UserPrincipal;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -25,10 +26,12 @@ public class EntityMapper {
         return userPrincipal;
     }
 
-    public static UserLoginDto toUserLoginDto(UserRegistrationDto from) {
-        UserLoginDto to = new UserLoginDto();
-        to.setEmail(from.getEmail());
-        to.setPassword(from.getPassword());
-        return to;
+    public static User fromUserRegistrationDto(UserRegistrationDto userDto) {
+        User user = new User();
+        user.setFirstName(userDto.getName());
+        user.setEmail(userDto.getUsername());
+        user.setEnabled(true);
+        user.setRoles(Collections.singletonList(Role.ROLE_USER));
+        return user;
     }
 }

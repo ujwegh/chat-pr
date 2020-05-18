@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import ru.nik.chatpr.dto.UserRegistrationDto;
 import ru.nik.chatpr.model.User;
 import ru.nik.chatpr.repository.UserRepository;
 import ru.nik.chatpr.util.EntityMapper;
@@ -35,11 +36,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-
     @Override
-    public User create(User user) {
-        checkNotFound(user, "user must not be null");
-        return prepareAndSave(user);
+    public User create(UserRegistrationDto userDto) {
+        log.debug("Create new user with email: {}", userDto.getUsername());
+        User user = EntityMapper.fromUserRegistrationDto(userDto);
+        String password = userDto.getPassword();
+        user.setPassword(StringUtils.hasText(password) ? passwordEncoder.encode(password) : password);
+        user.setEmail(userDto.getUsername().toLowerCase());
+        return repository.save(user);
     }
 
     @Override
@@ -98,13 +102,5 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User user = repository.findByEmail(email.toLowerCase())
                 .orElseThrow(() -> new UsernameNotFoundException("User " + email + " is not found"));
         return EntityMapper.toUserPrincipal(user);
-    }
-
-    private User prepareAndSave(User user) {
-        log.debug("prepare and save {}", user);
-        String password = user.getPassword();
-        user.setPassword(StringUtils.hasText(password) ? passwordEncoder.encode(password) : password);
-        user.setEmail(user.getEmail().toLowerCase());
-        return repository.save(user);
     }
 }

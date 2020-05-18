@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.util.CollectionUtils;
+import ru.nik.chatpr.model.enums.Gender;
+import ru.nik.chatpr.model.enums.Role;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;

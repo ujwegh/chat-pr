@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="header"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SignUp</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container">
+        <h3 th:text="#{signUp.user.title}">New User</h3>
+        <hr/>
+
+        <form class="form-horizontal" method="post" th:action="@{/signup}" th:object="${userDto}">
+            <div class="form-group">
+                <label for="name" class="col-sm-2 control-label" th:text="#{signUp.user.name}">Name</label>
+                <div class="col-sm-5">
+                    <input th:field="${userDto.name}" type="text" id="name" class="form-control"
+                           th:placeholder="#{signUp.user.your.name}"/>
+                    <div th:errors="*{name}" class="alert alert-danger">Error</div>
+                </div>
+            </div>
+<!--            <div class="form-group">-->
+<!--                <label for="email" class="col-sm-2 control-label" th:text="#{signUp.user.email}">Email</label>-->
+<!--                <div class="col-sm-5">-->
+<!--                    <input th:field="${user.email}" type="text" id="email" name="email" class="form-control"-->
+<!--                           th:placeholder="#{signUp.user.your.email}"/>-->
+<!--                    <div th:errors="*{email}" class="alert alert-danger">Error</div>-->
+<!--                </div>-->
+<!--            </div>-->
+            <div class="form-group">
+                <label for="username" class="col-sm-2 control-label" th:text="#{signUp.user.email}">Email</label>
+                <div class="col-sm-5">
+                    <input th:field="${userDto.username}" type="text" id="username" name="username" class="form-control"
+                           th:placeholder="#{signUp.user.your.email}"/>
+                    <div th:errors="*{username}" class="alert alert-danger">Error</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password" class="col-sm-2 control-label" th:text="#{signUp.user.password}">Password</label>
+                <div class="col-sm-5">
+                    <input th:field="${userDto.password}" type="password" class="form-control" id="password"
+                           name="password" th:placeholder="#{signUp.user.your.password}"/>
+                    <div th:errors="*{password}" class="alert alert-danger">Error</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password-repeat" class="col-sm-2 control-label" th:text="#{signUp.user.password}">Password</label>
+                <div class="col-sm-5">
+                    <input th:field="${userDto.passwordRepeat}" type="password" class="form-control" id="password-repeat"
+                           name="password-repeat" th:placeholder="#{signUp.user.your.password.repeat}"/>
+                    <div th:errors="*{password}" class="alert alert-danger">Error</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-4">
+                    <button type="submit" class="btn btn-default" th:text="#{signUp.user.create}">Create</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
