@@ -21,6 +21,12 @@ public class Room {
     private Boolean open;
     private List<User>  connectedUsers = new ArrayList<>();
 
+    public Room(String name, String description, Boolean open) {
+        this.name = name;
+        this.description = description;
+        this.open = open;
+    }
+
     @Override
     public String toString() {
         return "Room{" +

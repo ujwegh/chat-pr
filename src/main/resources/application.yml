@@ -34,8 +34,9 @@ spring:
       contact-points: 127.0.0.1
       keyspace-name: chatkeyspace
       port: 9042
-#      schema-action: NONE
-
+      schema-action: create_if_not_exists
+  thymeleaf:
+    cache: false
 
 
 server:

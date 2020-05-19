@@ -1,9 +1,17 @@
 package ru.nik.chatpr.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
+import org.springframework.data.cassandra.config.CassandraSessionFactoryBean;
 import org.springframework.data.cassandra.config.SchemaAction;
+import org.springframework.data.cassandra.core.cql.keyspace.CreateKeyspaceSpecification;
+import org.springframework.data.cassandra.core.cql.keyspace.KeyspaceOption;
+import org.springframework.data.cassandra.core.cql.session.init.KeyspacePopulator;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 public class CassandraConfig extends AbstractCassandraConfiguration {
@@ -16,14 +24,8 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
     @Value("${spring.data.cassandra.keyspace-name:placeholder}")
     private String keySpace;
 
-//    @Value("${spring.data.cassandra.username}")
-//    private String username;
-//
-//    @Value("${spring.data.cassandra.password}")
-//    private String password;
-
-//    @Value("${spring.data.cassandra.schema-action}")
-//    private String schemaAction;
+    @Value("${spring.data.cassandra.schema-action}")
+    private String schemaAction;
 
     @Override
     protected String getKeyspaceName() {
@@ -40,14 +42,35 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
         return port;
     }
 
-//    @Override
-//    public SchemaAction getSchemaAction() {
-//        return SchemaAction.valueOf(schemaAction);
-//    }
+    @Override
+    public SchemaAction getSchemaAction() {
+        return SchemaAction.valueOf(schemaAction.toUpperCase());
+    }
 
     @Override
     protected String getLocalDataCenter() {
-        return "dc1";
+        return "datacenter1";
     }
 
+    @Override
+    protected List<CreateKeyspaceSpecification> getKeyspaceCreations() {
+        final CreateKeyspaceSpecification specification =
+                CreateKeyspaceSpecification.createKeyspace(keySpace)
+                        .ifNotExists()
+                        .withSimpleReplication();
+        return List.of(specification);
+    }
+
+    @Override
+    protected List<String> getStartupScripts() {
+        return Arrays.asList("USE " + keySpace,
+                "CREATE TABLE IF NOT EXISTS messages (" +
+                        "roomId text," +
+                        "dateTime timestamp," +
+                        "fromUserEmail text," +
+                        "toUserEmail text," +
+                        "text text," +
+                        "PRIMARY KEY ((fromUserEmail, roomId), dateTime)" +
+                        ") WITH CLUSTERING ORDER BY (dateTime ASC)");
+    }
 }
