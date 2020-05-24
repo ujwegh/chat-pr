@@ -6,6 +6,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import ru.nik.chatpr.model.Message;
 import ru.nik.chatpr.model.Room;
+import ru.nik.chatpr.model.User;
 import ru.nik.chatpr.repository.MessageRepository;
 
 import java.util.List;
@@ -17,12 +18,14 @@ public class MessageServiceImpl implements MessageService {
     private final MessageRepository messageRepository;
     private final RoomService roomService;
     private final SimpMessagingTemplate simpMessagingTemplate;
+    private final UserService userService;
 
     @Autowired
-    public MessageServiceImpl(MessageRepository messageRepository, RoomService roomService, SimpMessagingTemplate simpMessagingTemplate) {
+    public MessageServiceImpl(MessageRepository messageRepository, RoomService roomService, SimpMessagingTemplate simpMessagingTemplate, UserService userService) {
         this.messageRepository = messageRepository;
         this.roomService = roomService;
         this.simpMessagingTemplate = simpMessagingTemplate;
+        this.userService = userService;
     }
 
     @Override
@@ -34,18 +37,15 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public void createMessage(Message message) {
         log.debug("Create new message");
-        String email = message.getFromUserEmail();
+        User user = userService.getByEmail(message.getFromUserEmail());
+        message.setCreator(user.getFirstName());
         if (message.isPublic()){
             Room room = roomService.findById(message.getRoomId());
-            room.getConnectedUsers().forEach(user -> {
-                message.setFromUserEmail(user.getEmail());
+            room.getConnectedUsers().forEach(connectedUser -> {
+                message.setFromUserEmail(connectedUser.getEmail());
                 messageRepository.save(message);
             });
         } else {
-            //save for sender
-            messageRepository.save(message);
-            //save for receiver
-            message.setFromUserEmail(message.getFromUserEmail());
             messageRepository.save(message);
         }
     }
@@ -63,5 +63,11 @@ public class MessageServiceImpl implements MessageService {
         simpMessagingTemplate.convertAndSendToUser(message.getFromUserEmail(), "/queue/" + message.getRoomId() + ".private.messages", message);
         simpMessagingTemplate.convertAndSendToUser(message.getToUserEmail(), "/queue/" + message.getRoomId() + ".private.messages", message);
         createMessage(message);
+    }
+
+    @Override
+    public void deleteAllMessagesByRoomId(String roomId) {
+        log.debug("Clean messages by roomId: {}", roomId);
+        messageRepository.deleteAllByRoomId(roomId);
     }
 }

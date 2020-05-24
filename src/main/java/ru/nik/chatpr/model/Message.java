@@ -25,8 +25,10 @@ public class Message {
     private String toUserEmail;
     @PrimaryKeyColumn(name = "roomId", ordinal = 1, type = PrimaryKeyType.PARTITIONED)
     private String roomId;
-    @PrimaryKeyColumn(name = "date", ordinal = 2, type = PrimaryKeyType.CLUSTERED, ordering = Ordering.ASCENDING)
+    @PrimaryKeyColumn(name = "dateTime", ordinal = 2, type = PrimaryKeyType.CLUSTERED, ordering = Ordering.ASCENDING)
     private LocalDateTime dateTime;
+    @PrimaryKeyColumn(name = "creator", ordinal = 3, type = PrimaryKeyType.PARTITIONED)
+    private String creator;
 
     public boolean isPublic() {
         return StringUtils.isEmpty(this.toUserEmail);

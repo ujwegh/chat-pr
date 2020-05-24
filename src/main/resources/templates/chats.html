@@ -1,33 +1,41 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Chats</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.4.1/css/bootstrap.min.css}"/>
 </head>
 <body>
 <div th:insert="fragments/header :: header"></div>
 <div class="container" th:fragment="content">
 
-    <h3 class="text-center" th:text="#{chat.available.chatrooms}">Available Chat Rooms</h3>
+    <h3 class="text-center" th:text="#{chat.available.rooms}">Chat Rooms</h3>
     <hr />
     <table class="table table-striped">
         <thead>
         <tr>
-            <th th:text="#{chat.chatrooms.name}">Name</th>
-            <th th:text="#{chat.chatrooms.description}">Description</th>
-            <th th:text="#{chat.chatrooms.connectedUsers}">Connected Users</th>
+            <th th:text="#{chat.room.name}">Name</th>
+            <th th:text="#{chat.room.description}">Description</th>
+            <th th:text="#{chat.room.isOpen}">Is room open</th>
+            <th th:text="#{chat.room.connectedUsers}">Connected Users</th>
             <th></th>
         </tr>
         </thead>
 
         <tbody>
-        <tr th:each="room : ${rooms}">
-            <td th:text="${room.name}">Brazil</td>
-            <td th:text="${room.description}">Meet brazilian people
-                here</td>
+        <tr th:each="room : ${rooms}" th:id="${room.id}">
+            <td th:text="${room.name}">Chat</td>
+            <td th:text="${room.description}">Some chat description</td>
+            <td th:text="${room.open}">true</td>
             <td th:text="${#lists.size(room.connectedUsers)}">0</td>
-            <td><a th:href="|/chatroom/${room.id}|" th:text="#{chat.chatrooms.join}">Join</a></td>
+            <td>
+                <a th:href="|/rooms/${room.id}|" class="btn btn-outline-primary" th:text="#{chat.room.join}" style="margin: 5px">Join</a>
+                <a th:if="${principalEmail.equals(room.creatorEmail)}">
+                    <a type="button" class="btn btn-outline-danger" th:text="#{chat.room.delete}" th:onclick="deleteRoom([[ ${room.id}]]);">Delete</a>
+                </a>
+            </td>
         </tr>
         </tbody>
     </table>
@@ -41,27 +49,84 @@
                             aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
-                    <h4 class="modal-title" id="newChatRoomModalLabel" th:text="#{chat.new.chatroom.title}">New Chat Room</h4>
+                    <h4 class="modal-title" id="newChatRoomModalLabel" th:text="#{chat.new.room.title}"></h4>
                 </div>
                 <div class="modal-body">
                     <form>
                         <div class="form-group">
-                            <label for="newChatroomName" class="control-label" th:text="#{chat.new.chatroom.name}">Name</label>
-                            <input type="text" class="form-control" id="newChatroomName" />
+                            <label for="newRoomName" class="control-label" th:text="#{chat.new.room.name}">Name</label>
+                            <input type="text" class="form-control" id="newRoomName" />
                         </div>
                         <div class="form-group">
-                            <label for="newChatRoomDescription" class="control-label" th:text="#{chat.new.chatroom.description}">Description</label>
-                            <textarea class="form-control" id="newChatRoomDescription"></textarea>
+                            <label for="newRoomDescription" class="control-label" th:text="#{chat.new.room.description}">Description</label>
+                            <textarea class="form-control" id="newRoomDescription"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="newRoomIsOpen" class="control-label" th:text="#{chat.new.room.open}">Is room open</label>
+                            <input type="checkbox" name="acceptRules" class="inline checkbox" id="newRoomIsOpen" value="false">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{chat.new.chatroom.close}">Close</button>
-                    <button id="btnCreateNewChatRoom" type="button"	class="btn btn-primary" th:text="#{chat.new.chatroom.create}">Create</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" th:text="#{chat.new.room.close}">Close</button>
+                    <button id="btnCreateNewChatRoom" type="button"	class="btn btn-primary" th:text="#{chat.new.room.create}">Create</button>
                 </div>
             </div>
         </div>
     </div>
+    <script >
+        $(document).ready(function() {
+            let newChatRoomModal = $("#newChatRoomModal");
+            let btnCreateNewChatRoom = $("#btnCreateNewChatRoom");
+            let txtNewRoomName = $("#newRoomName");
+            let txtNewRoomDescription = $("#newRoomDescription");
+            let newRoomIsOpen = $("#newRoomIsOpen")[0];
+
+            function createNewChatRoom() {
+                let newChatRoom = {
+                    'name': txtNewRoomName.val(),
+                    'description': txtNewRoomDescription.val(),
+                    'open': newRoomIsOpen.checked
+                };
+
+                $.ajax({
+                    type : "POST",
+                    url : "/rooms/",
+                    data : JSON.stringify(newChatRoom),
+                    contentType : "application/json",
+                    success : function(room) {
+                        var $tbody = $("tbody");
+                        var $tr = $("<tr />");
+
+                        $("<td />").text(room.name).appendTo($tr);
+                        $("<td />").text(room.description).appendTo($tr);
+                        $("<td />").text(room.open).appendTo($tr);
+                        $("<td />").text("0").appendTo($tr);
+
+                        var join = $('<a />', {
+                            "href" : "/rooms/" + room.id,
+                            "text" : "Join"
+                        });
+
+                        $("<td />").append(join).appendTo($tr);
+                        $tr.appendTo($tbody);
+                        newChatRoomModal.modal('hide');
+                    },
+                });
+            }
+
+            btnCreateNewChatRoom.on("click", createNewChatRoom);
+        })
+        function deleteRoom(roomId){
+            $.ajax({
+                type : "DELETE",
+                url : "/rooms/" + roomId,
+                success : function(room) {
+                    $('#' + roomId)[0].remove()
+                },
+            });
+        }
+    </script>
 </div>
 </body>
 </html>

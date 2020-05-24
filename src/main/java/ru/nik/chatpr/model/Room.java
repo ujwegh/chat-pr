@@ -19,12 +19,14 @@ public class Room {
     private String name;
     private String description;
     private Boolean open;
+    private String creatorEmail;
     private List<User>  connectedUsers = new ArrayList<>();
 
-    public Room(String name, String description, Boolean open) {
+    public Room(String name, String description, Boolean open, String creatorEmail) {
         this.name = name;
         this.description = description;
         this.open = open;
+        this.creatorEmail = creatorEmail;
     }
 
     @Override
@@ -33,6 +35,7 @@ public class Room {
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", open=" + open +
+                ", creatorEmail='" + creatorEmail + '\'' +
                 '}';
     }
 }

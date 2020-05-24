@@ -66,6 +66,10 @@ public class User extends BaseEntity {
         this.roles = new HashSet<>(Collections.singletonList(role));
     }
 
+    public boolean isAdmin(){
+        return this.roles.contains(Role.ROLE_ADMIN);
+    }
+
     @Override
     public String toString() {
         return "User{" +

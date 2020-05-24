@@ -4,51 +4,40 @@
       lang="en">
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
-    <script th:type="text/javascript" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
-    <script th:type="text/javascript" th:src="@{/webjars/bootstrap/4.4.1/js/bootstrap.min.js}"></script>
 
-    <link th:rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.4.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.4.1/css/bootstrap.min.css}"/>
     <meta charset="UTF-8">
     <title>Chat</title>
 </head>
 <body>
 
 <header th:fragment="header">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
         <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-            </div>
             <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav" sec:authorize="isAuthenticated()">
-                    <li class="active"><a href="/chats" th:text="#{menu.chatrooms}">Chat Rooms</a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" th:text="#{menu.language}">Language</a>
-                        <ul class="dropdown-menu">
-                            <li><a id="english" href="?lang=en" th:text="#{menu.language.english}">English</a></li>
-                            <li><a id="russian" href="?lang=ru" th:text="#{menu.language.russian}">Russian</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown" sec:authorize="isAuthenticated()">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span sec:authentication="name"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a id="newChatRoom" href="#" data-toggle="modal" data-target="#newChatRoomModal"  th:text="#{menu.new.chatrooms}" sec:authorize="hasRole('ROLE_ADMIN')">New Chat Room</a></li>
-                            <li><a href="/logout" th:text="#{menu.logout}">Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
+                <div class="nav navbar-nav" sec:authorize="isAuthenticated()">
+                    <a href="/chats" class="btn btn-outline-light" th:text="#{menu.rooms}" style="margin: 5px">Chats</a>
+                    <button  class="btn btn-outline-light" data-toggle="modal" data-target="#newChatRoomModal" id="newChatRoom" th:text="#{menu.new.room}"></button>
+                </div>
+            </div>
+            <div class="dropdown" style="margin: 5px">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownLangMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Lang</button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" id="english" href="?lang=en" th:text="#{menu.language.english}">English</a>
+                    <a class="dropdown-item" id="russian" href="?lang=ru" th:text="#{menu.language.russian}">Russian</a>
+                </div>
+            </div>
+            <div class="dropdown" sec:authorize="isAuthenticated()">
+                <form action="/logout">
+                    <button type="submit" class="btn btn-outline-light">Logout</button>
+                </form>
             </div>
         </div>
     </nav>
+    <script type="text/javascript" th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/4.4.1/js/bootstrap.min.js}"></script>
 </header>
 </body>
 </html>

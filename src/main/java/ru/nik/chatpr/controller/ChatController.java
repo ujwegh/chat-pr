@@ -1,16 +1,18 @@
 package ru.nik.chatpr.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 import ru.nik.chatpr.model.Room;
 import ru.nik.chatpr.service.RoomService;
 
+import java.security.Principal;
 import java.util.List;
 
+@Slf4j
 @Controller
 public class ChatController {
 
@@ -21,10 +23,13 @@ public class ChatController {
         this.chatRoomService = chatRoomService;
     }
 
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping(path = "/chats")
-    public String getRooms(Model model) {
+    public String getRooms(Model model, Principal principal) {
+        log.debug("Get all chat rooms");
         List<Room> rooms = chatRoomService.findAll();
         model.addAttribute("rooms", rooms);
+        model.addAttribute("principalEmail", principal.getName());
         return "chats";
     }
 }

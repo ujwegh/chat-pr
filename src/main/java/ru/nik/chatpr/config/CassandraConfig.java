@@ -1,14 +1,10 @@
 package ru.nik.chatpr.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
-import org.springframework.data.cassandra.config.CassandraSessionFactoryBean;
 import org.springframework.data.cassandra.config.SchemaAction;
 import org.springframework.data.cassandra.core.cql.keyspace.CreateKeyspaceSpecification;
-import org.springframework.data.cassandra.core.cql.keyspace.KeyspaceOption;
-import org.springframework.data.cassandra.core.cql.session.init.KeyspacePopulator;
 
 import java.util.Arrays;
 import java.util.List;
@@ -70,7 +66,8 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
                         "fromUserEmail text," +
                         "toUserEmail text," +
                         "text text," +
-                        "PRIMARY KEY ((fromUserEmail, roomId), dateTime)" +
+                        "creator text," +
+                        "PRIMARY KEY ((fromUserEmail, roomId), dateTime, creator)" +
                         ") WITH CLUSTERING ORDER BY (dateTime ASC)");
     }
 }

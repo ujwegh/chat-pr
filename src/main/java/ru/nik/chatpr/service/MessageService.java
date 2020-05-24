@@ -9,5 +9,5 @@ public interface MessageService {
     void createMessage(Message message);
     void sendPublicMessage(Message message);
     void sendPrivateMessage(Message message);
-
+    void deleteAllMessagesByRoomId(String roomId);
 }

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import ru.nik.chatpr.exceptions.ChatException;
 import ru.nik.chatpr.model.Room;
 import ru.nik.chatpr.model.User;
 import ru.nik.chatpr.repository.RoomRepository;
@@ -38,6 +39,16 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public void delete(String email, String roomId) {
+        log.debug("Delete room with id: {}", roomId);
+        User user = userService.getByEmail(email);
+        Room room = findById(roomId);
+        if (user.isAdmin() || room.getCreatorEmail().equals(email)){
+            roomRepository.deleteById(roomId);
+        } else throw new ChatException("You can't delete chat room");
+    }
+
+    @Override
     public List<Room> findAll() {
         log.debug("Find all rooms");
         return roomRepository.findAll();
@@ -48,7 +59,10 @@ public class RoomServiceImpl implements RoomService {
         log.debug("Join user: {} to room with id: {}", email, roomId);
         Room room = findById(roomId);
         User user = userService.getByEmail(email);
-        room.getConnectedUsers().add(user);
+        List<User> connectedUsers = room.getConnectedUsers();
+        if (connectedUsers.stream().noneMatch(user1 -> user1.getEmail().equals(email))) {
+            connectedUsers.add(user);
+        }
         roomRepository.save(room);
         updateConnectedUsersViaWebSocket(room);
         return room;

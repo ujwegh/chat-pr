@@ -37,13 +37,15 @@ spring:
       schema-action: create_if_not_exists
   thymeleaf:
     cache: false
-
-
 server:
   port: 8075
 
 logging.level.org.springframework.web: DEBUG
-
+logging:
+  level:
+    ru:
+      nik:
+        chatpr: debug
 ---
 spring:
   profiles: prod

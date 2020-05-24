@@ -15,7 +15,6 @@ public class RoomDto {
     private String name;
     @NotEmpty
     private String description;
-    @NotEmpty
     @NotNull
     private Boolean open;
 }

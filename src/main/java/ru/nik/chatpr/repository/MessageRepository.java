@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends CassandraRepository<Message, String> {
     List<Message> findAllByFromUserEmailAndRoomId(String email, String roomId);
+    void deleteAllByRoomId(String roomId);
 }
