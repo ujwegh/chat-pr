@@ -1,0 +1,78 @@
+version: '3'
+services:
+  redis:
+    image: "redis:6.0.3"
+    ports:
+      - "6379:6379"
+    restart: always
+    networks:
+      - backend-network
+
+  cassandra:
+    image: "cassandra:latest"
+    ports:
+      - "9042:9042"
+    depends_on:
+      - redis
+    restart: always
+    volumes:
+      - ./out/cassandra_data:/var/lib/cassandra
+    networks:
+      - backend-network
+    healthcheck:
+      test: ["CMD", "cqlsh", "-u cassandra", "-p cassandra" ,"-e describe keyspaces"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+
+  cassandra-load-keyspace:
+    container_name: cassandra-load-keyspace
+    image: cassandra:latest
+    depends_on:
+      - cassandra
+    volumes:
+      - ./src/main/resources/db/cassandra_kespaces.cql:/schema.cql
+    command: /bin/bash -c "sleep 60 && echo loading cassandra keyspace && cqlsh cassandra -f /schema.cql"
+    networks:
+      - backend-network
+
+  postgres:
+    image: postgres:9.6
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: dev-chat
+    depends_on:
+      - cassandra-load-keyspace
+    volumes:
+      - db-data:/var/lib/postgres
+    networks:
+      - backend-network
+  backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "8075:8075"
+    restart: always
+    depends_on:
+      - postgres
+      - cassandra
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/dev-chat
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATA_CASSANDRA_CONTACT-POINTS: cassandra
+      SPRING_DATA_CASSANDRA_KEYSPACE-NAME: chatkeyspace
+      SPRING_DATA_CASSANDRA_PORT: 9042
+    networks:
+      - backend-network
+
+volumes:
+  db-data:
+
+networks:
+  backend-network:

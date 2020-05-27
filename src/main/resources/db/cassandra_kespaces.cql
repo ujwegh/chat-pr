@@ -1,1 +1,1 @@
-CREATE keyspace chatkeyspace WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
+CREATE keyspace if not exists chatkeyspace WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
