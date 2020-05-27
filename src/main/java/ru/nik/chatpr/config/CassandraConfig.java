@@ -67,7 +67,7 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
                         "toUserEmail text," +
                         "text text," +
                         "creator text," +
-                        "PRIMARY KEY ((fromUserEmail, roomId), dateTime, creator)" +
-                        ") WITH CLUSTERING ORDER BY (dateTime ASC)");
+                        "PRIMARY KEY (( roomId),fromUserEmail, dateTime, creator)" +
+                        ") WITH CLUSTERING ORDER BY (fromUserEmail DESC, dateTime ASC)");
     }
 }

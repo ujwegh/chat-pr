@@ -34,8 +34,7 @@ public class MessageServiceImpl implements MessageService {
         return messageRepository.findAllByFromUserEmailAndRoomId(email, roomId);
     }
 
-    @Override
-    public void createMessage(Message message) {
+    private void createMessage(Message message) {
         log.debug("Create new message");
         User user = userService.getByEmail(message.getFromUserEmail());
         message.setCreator(user.getFirstName());
@@ -46,6 +45,10 @@ public class MessageServiceImpl implements MessageService {
                 messageRepository.save(message);
             });
         } else {
+            //save for sender
+            messageRepository.save(message);
+            //save for receiver
+            message.setFromUserEmail(message.getToUserEmail());
             messageRepository.save(message);
         }
     }

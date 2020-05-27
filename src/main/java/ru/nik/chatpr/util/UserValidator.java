@@ -3,7 +3,6 @@ package ru.nik.chatpr.util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import ru.nik.chatpr.dto.UserRegistrationDto;
 import ru.nik.chatpr.service.UserService;

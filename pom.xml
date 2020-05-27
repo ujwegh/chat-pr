@@ -26,6 +26,7 @@
         <stomp-websocket.version>2.3.3</stomp-websocket.version>
         <webjars-locator.version>0.38</webjars-locator.version>
         <noty.version>2.2.4</noty.version>
+        <testconteiners.version>1.14.2</testconteiners.version>
     </properties>
 
     <dependencies>
@@ -164,6 +165,23 @@
                     <artifactId>groovy-json</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${testconteiners.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${testconteiners.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

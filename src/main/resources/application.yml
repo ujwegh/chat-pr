@@ -19,7 +19,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
   session:
     store-type: redis
@@ -34,7 +34,7 @@ spring:
       contact-points: 127.0.0.1
       keyspace-name: chatkeyspace
       port: 9042
-      schema-action: create_if_not_exists
+      schema-action: none
   thymeleaf:
     cache: false
 server:
